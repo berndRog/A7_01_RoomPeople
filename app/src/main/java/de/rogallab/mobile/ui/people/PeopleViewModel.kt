@@ -29,11 +29,6 @@ class PeopleViewModel(
 
    private var removedPerson: Person? = null
 
-   // Refresh scenario
-   private val reloadTrigger = MutableSharedFlow<Unit>(replay = 1)
-   init {
-      //fetch()
-   }
 
    // ===============================
    // S T A T E   C H A N G E S
@@ -54,8 +49,8 @@ class PeopleViewModel(
    //
    // Using stateIn means that we only collect data when the UI is actually observing.
    // This keeps things lightweight and prevents unnecessary data collection
-   val peopleUiStateFlow: StateFlow<PeopleUiState> = _repository.getAll()
-      .map { resultData ->
+   val peopleUiStateFlow: StateFlow<PeopleUiState> =
+      _repository.getAll().map { resultData ->
          when (resultData) {
             is ResultData.Success -> {
                _peopleUiStateFlow.update { it: PeopleUiState ->
@@ -82,6 +77,12 @@ class PeopleViewModel(
    // the latest event.
    // flatMapLatest: It listens for the latest data and cancels any previous collector when
    // a new one comes in. We only use the most recent collection. No leaks. Just clean data.
+
+   // Refreshable scenario
+   private val reloadTrigger = MutableSharedFlow<Unit>(replay = 1)
+   init {
+      // fetch()
+   }
 
    @OptIn(ExperimentalCoroutinesApi::class)
    val peopleUiStateFlowNotUsed: StateFlow<PeopleUiState> = reloadTrigger.flatMapLatest {

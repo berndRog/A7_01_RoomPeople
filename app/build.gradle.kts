@@ -145,7 +145,7 @@ dependencies {
    //implementation(libs.koin.androidx.startup)
 
    // Ktor/Kotlin JSON Serializer
-   implementation(libs.kotlinx.serialization.json)
+   // implementation(libs.kotlinx.serialization.json)
 
    // TESTS -----------------------
    testImplementation(libs.junit)
