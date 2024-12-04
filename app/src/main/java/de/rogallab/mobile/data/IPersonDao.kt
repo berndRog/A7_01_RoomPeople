@@ -1,4 +1,4 @@
-package de.rogallab.mobile.data.local
+package de.rogallab.mobile.data
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import de.rogallab.mobile.data.local.dtos.PersonDto
+import de.rogallab.mobile.data.dtos.PersonDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,7 +16,7 @@ interface IPersonDao {
    fun selectAll(): Flow<List<PersonDto>>
 
    @Query("SELECT * FROM Person WHERE id = :personId")
-   suspend fun selectById(personId: String): PersonDto?
+   suspend fun findById(personId: String): PersonDto?
 
    @Query("SELECT COUNT(*) FROM Person")
    suspend fun count(): Int
@@ -30,5 +30,5 @@ interface IPersonDao {
    @Update
    suspend fun update(personDto: PersonDto)
    @Delete
-   suspend fun delete(personDto: PersonDto)
+   suspend fun remove(personDto: PersonDto)
 }

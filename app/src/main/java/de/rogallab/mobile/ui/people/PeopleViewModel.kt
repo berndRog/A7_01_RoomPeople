@@ -50,7 +50,7 @@ class PeopleViewModel(
    // Using stateIn means that we only collect data when the UI is actually observing.
    // This keeps things lightweight and prevents unnecessary data collection
    val peopleUiStateFlow: StateFlow<PeopleUiState> =
-      _repository.getAll().map { resultData ->
+      _repository.selectAll().map { resultData ->
          when (resultData) {
             is ResultData.Success -> {
                _peopleUiStateFlow.update { it: PeopleUiState ->
@@ -86,7 +86,7 @@ class PeopleViewModel(
 
    @OptIn(ExperimentalCoroutinesApi::class)
    val peopleUiStateFlowNotUsed: StateFlow<PeopleUiState> = reloadTrigger.flatMapLatest {
-      _repository.getAll()
+      _repository.selectAll()
          .map { resultData ->
             when (resultData) {
                is ResultData.Success -> {
@@ -185,7 +185,7 @@ class PeopleViewModel(
       logDebug(TAG, "fetchPersonById: $personId")
 
       viewModelScope.launch(exceptionHandler) {
-         when (val resultData = _repository.getById(personId)) {
+         when (val resultData = _repository.findById(personId)) {
             is ResultData.Success -> _personUiStateFlow.update { it: PersonUiState ->
                it.copy(person = resultData.data ?: Person())  // new UiState
             }
@@ -197,7 +197,7 @@ class PeopleViewModel(
    private fun create() {
       logDebug(TAG, "createPerson: ${_personUiStateFlow.value.person.id.as8()}")
       viewModelScope.launch(exceptionHandler) {
-         when (val resultData = _repository.create(_personUiStateFlow.value.person)) {
+         when (val resultData = _repository.insert(_personUiStateFlow.value.person)) {
             is ResultData.Success -> fetch()
             is ResultData.Error ->
                onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
@@ -232,7 +232,7 @@ class PeopleViewModel(
       removedPerson?.let { person ->
          logDebug(TAG, "undoRemovePerson: ${person.id.as8()}")
          viewModelScope.launch(exceptionHandler) {
-            when (val resultData = _repository.create(person)) {
+            when (val resultData = _repository.insert(person)) {
                is ResultData.Success -> {
                   removedPerson = null
                   fetch()

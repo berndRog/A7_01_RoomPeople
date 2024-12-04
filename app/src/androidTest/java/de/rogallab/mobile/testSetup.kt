@@ -1,7 +1,7 @@
 package de.rogallab.mobile
 
 import androidx.room.Room
-import de.rogallab.mobile.data.local.IPersonDao
+import de.rogallab.mobile.data.IPersonDao
 import de.rogallab.mobile.data.local.database.AppDatabase
 import de.rogallab.mobile.data.local.database.SeedDatabase
 import de.rogallab.mobile.data.local.seed.Seed

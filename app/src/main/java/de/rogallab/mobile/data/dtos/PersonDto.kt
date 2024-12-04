@@ -1,4 +1,4 @@
-package de.rogallab.mobile.data.local.dtos
+package de.rogallab.mobile.data.dtos
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

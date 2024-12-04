@@ -39,11 +39,12 @@ class AppStart : Application() {
    }
 
    companion object {
-      const val ISINFO = true
-      const val ISDEBUG = true
-      const val ISVERBOSE = true
-      const val DATABASENAME = "db_7_01"
-      const val DATABASEVERSION = 1
+      const val IS_INFO = true
+      const val IS_DEBUG = true
+      const val IS_VERBOSE = true
+
+      const val DATABASE_NAME = "db_7_01_RoomPeople.db"
+      const val DATABASE_VERSION = 1
 
       private const val TAG = "<-AppStart"
    }

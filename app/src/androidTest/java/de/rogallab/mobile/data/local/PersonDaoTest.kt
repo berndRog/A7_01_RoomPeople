@@ -1,15 +1,12 @@
 package de.rogallab.mobile.data.local
 
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import de.rogallab.mobile.AppStart
+import de.rogallab.mobile.data.IPersonDao
 import de.rogallab.mobile.data.local.database.AppDatabase
 import de.rogallab.mobile.data.local.database.SeedDatabase
-import de.rogallab.mobile.data.local.dtos.PersonDto
 import de.rogallab.mobile.data.local.seed.Seed
 import de.rogallab.mobile.dataTestModules
-import de.rogallab.mobile.domain.utilities.logDebug
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -79,7 +76,7 @@ class PersonDaoTest: KoinTest {
       _seedDatabase.seedPerson()
       val personDto = _seed.personDtos[0]
       // Act
-      val actual = _personDao.selectById(personDto.id)
+      val actual = _personDao.findById(personDto.id)
       // Assert
       assertEquals(actual, personDto)
    }
@@ -101,7 +98,7 @@ class PersonDaoTest: KoinTest {
       // Act
       _personDao.insert(personDto)
       // Assert
-      val actual = _personDao.selectById(personDto.id)
+      val actual = _personDao.findById(personDto.id)
       assertEquals(actual, personDto)
    }
    @Test
@@ -113,7 +110,7 @@ class PersonDaoTest: KoinTest {
       val updatedPersonDto = personDto.copy(firstName = "Arne updated", lastName = "Arndt updated")
       _personDao.update(updatedPersonDto)
       // Assert
-      val actual = _personDao.selectById(personDto.id)
+      val actual = _personDao.findById(personDto.id)
       assertEquals(actual, updatedPersonDto)
    }
    @Test
@@ -122,9 +119,9 @@ class PersonDaoTest: KoinTest {
       _seedDatabase.seedPerson()
       val personDto = _seed.personDtos[0]
       // Act
-      _personDao.delete(personDto)
+      _personDao.remove(personDto)
       // Assert
-      val actual = _personDao.selectById(personDto.id)
+      val actual = _personDao.findById(personDto.id)
       assertNull(actual)
    }
 

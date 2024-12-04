@@ -5,13 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface IPersonRepository {
 
-    fun getAll(): Flow<ResultData<List<Person>>>
-    suspend fun getById(id: String): ResultData<Person?>
-    suspend fun count(): ResultData<Int>
+   fun selectAll(): Flow<ResultData<List<Person>>>
+   suspend fun findById(id: String): ResultData<Person?>
+   suspend fun count(): ResultData<Int>
 
-    suspend fun create(person: Person): ResultData<Unit>
-    suspend fun create(people: List<Person>): ResultData<Unit>
-    suspend fun update(person: Person): ResultData<Unit>
-    suspend fun remove(person: Person): ResultData<Unit>
+   suspend fun insert(person: Person): ResultData<Unit>
+   suspend fun insert(people: List<Person>): ResultData<Unit>
+   suspend fun update(person: Person): ResultData<Unit>
+   suspend fun remove(person: Person): ResultData<Unit>
 
 }

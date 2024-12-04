@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import de.rogallab.mobile.R
-import de.rogallab.mobile.data.local.dtos.PersonDto
+import de.rogallab.mobile.data.dtos.PersonDto
 import de.rogallab.mobile.data.local.io.deleteFileOnStorage
 import de.rogallab.mobile.data.local.io.writeImageToStorage
 import de.rogallab.mobile.domain.utilities.createUuid

@@ -1,18 +1,17 @@
 package de.rogallab.mobile.data.repositories
 
-import de.rogallab.mobile.data.local.IPersonDao
-import de.rogallab.mobile.data.local.dtos.PersonDto
+import de.rogallab.mobile.data.IPersonDao
+import de.rogallab.mobile.data.dtos.PersonDto
+import de.rogallab.mobile.data.local.mapping.toPerson
+import de.rogallab.mobile.data.local.mapping.toPersonDto
 import de.rogallab.mobile.domain.IPersonRepository
 import de.rogallab.mobile.domain.ResultData
 import de.rogallab.mobile.domain.entities.Person
-import de.rogallab.mobile.data.local.mapping.toPerson
-import de.rogallab.mobile.data.local.mapping.toPersonDto
 import de.rogallab.mobile.domain.utilities.logDebug
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-
 import kotlinx.coroutines.withContext
 
 class PersonRepository(
@@ -20,7 +19,7 @@ class PersonRepository(
    private val _coroutineDispatcher: CoroutineDispatcher
 ): IPersonRepository {
 
-   override fun getAll(): Flow<ResultData<List<Person>>> = flow {
+   override fun selectAll(): Flow<ResultData<List<Person>>> = flow {
       try {
          _personDao.selectAll().collect { personDtos: List<PersonDto> ->
             logDebug(TAG, "getAll: ${personDtos.size}")
@@ -34,11 +33,11 @@ class PersonRepository(
       }
    }.flowOn(_coroutineDispatcher)
 
-   override suspend fun getById(id: String): ResultData<Person?> =
+   override suspend fun findById(id: String): ResultData<Person?> =
       withContext(_coroutineDispatcher) {
          return@withContext try {
             logDebug(TAG, "getById()")
-            val personDto: PersonDto? = _personDao.selectById(id)
+            val personDto: PersonDto? = _personDao.findById(id)
             val person: Person? = personDto?.toPerson()
             ResultData.Success(person)
          } catch (t: Throwable) {
@@ -55,7 +54,7 @@ class PersonRepository(
          }
       }
 
-   override suspend fun create(person: Person): ResultData<Unit> =
+   override suspend fun insert(person: Person): ResultData<Unit> =
       withContext(_coroutineDispatcher) {
          return@withContext try {
             logDebug(TAG, "create()")
@@ -67,7 +66,7 @@ class PersonRepository(
          }
       }
 
-   override suspend fun create(people: List<Person>): ResultData<Unit> =
+   override suspend fun insert(people: List<Person>): ResultData<Unit> =
       withContext(_coroutineDispatcher) {
          return@withContext try {
             logDebug(TAG, "create()")
@@ -96,7 +95,7 @@ class PersonRepository(
          return@withContext try {
             logDebug(TAG, "remove()")
             val personDto = person.toPersonDto()
-            _personDao.delete(personDto)
+            _personDao.remove(personDto)
             ResultData.Success(Unit)
          } catch (t: Throwable) {
             ResultData.Error(t)

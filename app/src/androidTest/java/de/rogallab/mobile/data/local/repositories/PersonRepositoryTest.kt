@@ -1,10 +1,8 @@
 package de.rogallab.mobile.data.local.repositories
 
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import de.rogallab.mobile.AppStart
-import de.rogallab.mobile.data.local.IPersonDao
+import de.rogallab.mobile.data.IPersonDao
 import de.rogallab.mobile.data.local.database.AppDatabase
 import de.rogallab.mobile.data.local.database.SeedDatabase
 import de.rogallab.mobile.data.local.mapping.toPerson
@@ -84,7 +82,7 @@ class PersonRepositoryTest: KoinTest {
       _seedDatabase.seedPerson()
       val person = _seed.personDtos[0].toPerson()
       // Act
-      val resultData = _personRepository.getById(person.id)
+      val resultData = _personRepository.findById(person.id)
       // Assert
       when(resultData) {
          is ResultData.Success -> {
@@ -101,7 +99,7 @@ class PersonRepositoryTest: KoinTest {
       // Arrange
       _seedDatabase.seedPerson()
       // Act
-      val resultData = _personRepository.getAll().first()
+      val resultData = _personRepository.selectAll().first()
       // Arrange
       when(resultData) {
          is ResultData.Success -> {
@@ -122,9 +120,9 @@ class PersonRepositoryTest: KoinTest {
       // Arrange
       val person = _seed.personDtos[0].toPerson()
       // Act
-      assertIs<ResultData.Success<*>>( _personRepository.create(person))
+      assertIs<ResultData.Success<*>>( _personRepository.insert(person))
       // Assert
-      val resultData = _personRepository.getById(person.id)
+      val resultData = _personRepository.findById(person.id)
       when(resultData) {
          is ResultData.Success -> {
             // actual
@@ -140,12 +138,12 @@ class PersonRepositoryTest: KoinTest {
    fun testUpdate() = runTest {
       // Arrange
       val person = _seed.personDtos[0].toPerson()
-      _personRepository.create(person)
+      _personRepository.insert(person)
       // Act
       val updatedPerson = person.copy(firstName = "Arne updated", lastName = "Arndt updated")
       assertIs<ResultData.Success<*>>(_personRepository.update(updatedPerson))
       // Assert
-      val resultData = _personRepository.getById(person.id)
+      val resultData = _personRepository.findById(person.id)
       when(resultData) {
          is ResultData.Success -> {
             // actual
@@ -163,9 +161,9 @@ class PersonRepositoryTest: KoinTest {
       _seedDatabase.seedPerson()
       val personDto = _seed.personDtos[0]
       // Act
-      _personDao.delete(personDto)
+      _personDao.remove(personDto)
       // Assert
-      val actual = _personDao.selectById(personDto.id)
+      val actual = _personDao.findById(personDto.id)
       assertNull(actual)
    }
 

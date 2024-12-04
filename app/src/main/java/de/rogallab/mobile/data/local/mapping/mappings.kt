@@ -1,6 +1,6 @@
 package de.rogallab.mobile.data.local.mapping
 
-import de.rogallab.mobile.data.local.dtos.PersonDto
+import de.rogallab.mobile.data.dtos.PersonDto
 import de.rogallab.mobile.domain.entities.Person
 
 fun PersonDto.toPerson(): Person = Person(
