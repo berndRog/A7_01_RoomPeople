@@ -1,4 +1,4 @@
-package de.rogallab.mobile.data
+package de.rogallab.mobile.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete

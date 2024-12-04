@@ -1,4 +1,4 @@
-package de.rogallab.mobile.data.local.mapping
+package de.rogallab.mobile.data.mapping
 
 import de.rogallab.mobile.data.dtos.PersonDto
 import de.rogallab.mobile.domain.entities.Person

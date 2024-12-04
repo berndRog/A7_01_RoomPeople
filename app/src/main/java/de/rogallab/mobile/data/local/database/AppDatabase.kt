@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import de.rogallab.mobile.AppStart
-import de.rogallab.mobile.data.IPersonDao
+import de.rogallab.mobile.data.local.IPersonDao
 import de.rogallab.mobile.data.dtos.PersonDto
 
 @Database(

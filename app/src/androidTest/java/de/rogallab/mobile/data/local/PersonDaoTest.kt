@@ -2,7 +2,6 @@ package de.rogallab.mobile.data.local
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import de.rogallab.mobile.data.IPersonDao
 import de.rogallab.mobile.data.local.database.AppDatabase
 import de.rogallab.mobile.data.local.database.SeedDatabase
 import de.rogallab.mobile.data.local.seed.Seed

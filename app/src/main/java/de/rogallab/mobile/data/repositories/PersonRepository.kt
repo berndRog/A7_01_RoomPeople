@@ -1,9 +1,9 @@
 package de.rogallab.mobile.data.repositories
 
-import de.rogallab.mobile.data.IPersonDao
+import de.rogallab.mobile.data.local.IPersonDao
 import de.rogallab.mobile.data.dtos.PersonDto
-import de.rogallab.mobile.data.local.mapping.toPerson
-import de.rogallab.mobile.data.local.mapping.toPersonDto
+import de.rogallab.mobile.data.mapping.toPerson
+import de.rogallab.mobile.data.mapping.toPersonDto
 import de.rogallab.mobile.domain.IPersonRepository
 import de.rogallab.mobile.domain.ResultData
 import de.rogallab.mobile.domain.entities.Person

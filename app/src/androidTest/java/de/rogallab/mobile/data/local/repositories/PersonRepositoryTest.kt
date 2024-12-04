@@ -2,10 +2,10 @@ package de.rogallab.mobile.data.local.repositories
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import de.rogallab.mobile.data.IPersonDao
+import de.rogallab.mobile.data.local.IPersonDao
 import de.rogallab.mobile.data.local.database.AppDatabase
 import de.rogallab.mobile.data.local.database.SeedDatabase
-import de.rogallab.mobile.data.local.mapping.toPerson
+import de.rogallab.mobile.data.mapping.toPerson
 import de.rogallab.mobile.data.local.seed.Seed
 import de.rogallab.mobile.dataTestModules
 import de.rogallab.mobile.domain.IPersonRepository
