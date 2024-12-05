@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface IErrorHandler {
    // current error/info state
    val errorStateFlow: StateFlow<ErrorState>
-   // process error event
+   // handle error event only
+   fun handleErrorEvent(t: Throwable)
+   // handle error event + navigation event
    fun onErrorEvent(params: ErrorParams)
    // process error event handled
    fun onErrorEventHandled()

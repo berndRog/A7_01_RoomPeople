@@ -10,6 +10,7 @@ import de.rogallab.mobile.domain.utilities.logError
 import de.rogallab.mobile.domain.utilities.logInfo
 import de.rogallab.mobile.ui.base.BaseViewModel
 import de.rogallab.mobile.ui.errors.ErrorParams
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,11 +25,9 @@ import kotlinx.coroutines.launch
 
 class PeopleViewModel(
    private val _repository: IPersonRepository,
-   private val _validator: PersonValidator
-) : BaseViewModel(TAG) {
-
-   private var removedPerson: Person? = null
-
+   private val _validator: PersonValidator,
+   private val _exceptionHandler: CoroutineExceptionHandler
+) : BaseViewModel(_exceptionHandler, TAG) {
 
    // ===============================
    // S T A T E   C H A N G E S
@@ -41,26 +40,18 @@ class PeopleViewModel(
    fun onProcessPeopleIntent(intent: PeopleIntent) {
       logInfo(TAG, "onProcessIntent: $intent")
       when (intent) {
-         is PeopleIntent.Fetch -> { } //fetch()
+         is PeopleIntent.Fetch -> {} //fetch()
       }
    }
 
    // Basic Scenario: Use the stateIn() operator to convert a Flow from the data source into a State
-   //
-   // Using stateIn means that we only collect data when the UI is actually observing.
-   // This keeps things lightweight and prevents unnecessary data collection
    val peopleUiStateFlow: StateFlow<PeopleUiState> =
       _repository.selectAll().map { resultData ->
          when (resultData) {
-            is ResultData.Success -> {
-               _peopleUiStateFlow.update { it: PeopleUiState ->
-                  it.copy(people = resultData.data.toList())
-               }
-               logDebug(TAG, "fetch() people: ${_peopleUiStateFlow.value.people.size}")
+            is ResultData.Success -> _peopleUiStateFlow.update { it: PeopleUiState ->
+               it.copy(people = resultData.data.toList())
             }
-            is ResultData.Error -> {
-               onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
-            }
+            is ResultData.Error -> handleErrorEvent(resultData.throwable)
          }
          return@map _peopleUiStateFlow.value
       }.stateIn(
@@ -69,35 +60,20 @@ class PeopleViewModel(
          initialValue = PeopleUiState()
       )
 
-
    // Refreshable Scenario
-   // Sometimes, we need a refreshable Flow (swipe to refresh, or a refresh button).
-   // In this case, a MutableSharedFlow paired with flatMapLatest can help:
-   // MutableSharedFlow: This is our control point for triggering a reload. It only stores
-   // the latest event.
-   // flatMapLatest: It listens for the latest data and cancels any previous collector when
-   // a new one comes in. We only use the most recent collection. No leaks. Just clean data.
-
-   // Refreshable scenario
    private val reloadTrigger = MutableSharedFlow<Unit>(replay = 1)
    init {
-      // fetch()
+      // fetchTrigger()
    }
-
    @OptIn(ExperimentalCoroutinesApi::class)
    val peopleUiStateFlowNotUsed: StateFlow<PeopleUiState> = reloadTrigger.flatMapLatest {
       _repository.selectAll()
          .map { resultData ->
             when (resultData) {
-               is ResultData.Success -> {
-                  _peopleUiStateFlow.update { it: PeopleUiState ->
-                     it.copy(people = resultData.data.toList())
-                  }
-                  logDebug(TAG, "fetch() people: ${_peopleUiStateFlow.value.people.size}")
+               is ResultData.Success -> _peopleUiStateFlow.update { it: PeopleUiState ->
+                  it.copy(people = resultData.data.toList())
                }
-               is ResultData.Error -> {
-                  onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
-               }
+               is ResultData.Error -> handleErrorEvent(resultData.throwable)
             }
             return@map _peopleUiStateFlow.value
          }
@@ -107,7 +83,7 @@ class PeopleViewModel(
       PeopleUiState()
    )
 
-   fun fetch() {
+   fun fetchTrigger() {
       viewModelScope.launch {
          reloadTrigger.emit(Unit)
       }
@@ -153,6 +129,7 @@ class PeopleViewModel(
          is PersonIntent.Create -> create()
          is PersonIntent.Update -> update()
          is PersonIntent.Remove -> remove(intent.person)
+         is PersonIntent.UndoRemove -> undoRemove()
       }
    }
 
@@ -183,62 +160,54 @@ class PeopleViewModel(
 
    private fun fetchById(personId: String) {
       logDebug(TAG, "fetchPersonById: $personId")
-
-      viewModelScope.launch(exceptionHandler) {
+      viewModelScope.launch(_exceptionHandler) {
          when (val resultData = _repository.findById(personId)) {
             is ResultData.Success -> _personUiStateFlow.update { it: PersonUiState ->
                it.copy(person = resultData.data ?: Person())  // new UiState
             }
-            is ResultData.Error ->
-               onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
-         }
-      }
-   }
-   private fun create() {
-      logDebug(TAG, "createPerson: ${_personUiStateFlow.value.person.id.as8()}")
-      viewModelScope.launch(exceptionHandler) {
-         when (val resultData = _repository.insert(_personUiStateFlow.value.person)) {
-            is ResultData.Success -> fetch()
-            is ResultData.Error ->
-               onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
-         }
-      }
-   }
-   private fun update() {
-      logDebug(TAG, "updatePerson: ${_personUiStateFlow.value.person.id.as8()}")
-      viewModelScope.launch(exceptionHandler) {
-         when (val resultData = _repository.update(_personUiStateFlow.value.person)) {
-            is ResultData.Success -> fetch()
-            is ResultData.Error ->
-               onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
-         }
-      }
-   }
-   private fun remove(person: Person) {
-      logDebug(TAG, "removePerson: ${person.id.as8()}")
-      viewModelScope.launch(exceptionHandler) {
-         when (val resultData = _repository.remove(person)) {
-            is ResultData.Success -> {
-               removedPerson = person
-               fetch()
-            }
-            is ResultData.Error ->
-               onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
+            is ResultData.Error -> handleErrorEvent(resultData.throwable)
          }
       }
    }
 
-   fun undoRemove() {
+   private fun create() {
+      logDebug(TAG, "createPerson()")
+      viewModelScope.launch(_exceptionHandler) {
+         when (val resultData = _repository.insert(_personUiStateFlow.value.person)) {
+            is ResultData.Success -> {}
+            is ResultData.Error -> handleErrorEvent(resultData.throwable)
+         }
+      }
+   }
+
+   private fun update() {
+      logDebug(TAG, "updatePerson()")
+      viewModelScope.launch(_exceptionHandler) {
+         when (val resultData = _repository.update(_personUiStateFlow.value.person)) {
+            is ResultData.Success -> {}
+            is ResultData.Error -> handleErrorEvent(resultData.throwable)
+         }
+      }
+   }
+
+   private var removedPerson: Person? = null
+   private fun remove(person: Person) {
+      logDebug(TAG, "removePerson()")
+      viewModelScope.launch(_exceptionHandler) {
+         when (val resultData = _repository.remove(person)) {
+            is ResultData.Success -> removedPerson = person
+            is ResultData.Error -> handleErrorEvent(resultData.throwable)
+         }
+      }
+   }
+
+   private fun undoRemove() {
       removedPerson?.let { person ->
-         logDebug(TAG, "undoRemovePerson: ${person.id.as8()}")
-         viewModelScope.launch(exceptionHandler) {
+         logDebug(TAG, "undoRemovePerson()")
+         viewModelScope.launch(_exceptionHandler) {
             when (val resultData = _repository.insert(person)) {
-               is ResultData.Success -> {
-                  removedPerson = null
-                  fetch()
-               }
-               is ResultData.Error ->
-                  onErrorEvent(ErrorParams(throwable = resultData.throwable, navEvent = null))
+               is ResultData.Success -> removedPerson = null
+               is ResultData.Error -> handleErrorEvent(resultData.throwable)
             }
          }
       }
@@ -255,14 +224,14 @@ class PeopleViewModel(
    fun validate(isInput: Boolean): Boolean {
       val person = _personUiStateFlow.value.person
 
-      if(validateAndLogError(_validator.validateFirstName(person.firstName)) &&
+      if (validateAndLogError(_validator.validateFirstName(person.firstName)) &&
          validateAndLogError(_validator.validateLastName(person.lastName)) &&
          validateAndLogError(_validator.validateEmail(person.email)) &&
          validateAndLogError(_validator.validatePhone(person.phone))
       ) {
          // write data to repository
          if (isInput) this.create()
-         else         this.update()
+         else this.update()
          return true
       } else {
          return false

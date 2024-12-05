@@ -137,7 +137,8 @@ fun PeopleListScreen(
                onProcessIntent = {                     // remove item
                   viewModel.onProcessPersonIntent(PersonIntent.Remove(person)) },
                onErrorEvent = viewModel::onErrorEvent, // undo -> show snackbar
-               onUndoAction = viewModel::undoRemove    // undo -> action
+               onUndoAction = {                        // undo -> action
+                  viewModel.onProcessPersonIntent(PersonIntent.UndoRemove) }
             ) {
                // content
                PersonCard(

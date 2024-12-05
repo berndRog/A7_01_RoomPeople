@@ -7,13 +7,17 @@ import de.rogallab.mobile.data.local.database.SeedDatabase
 import de.rogallab.mobile.data.local.seed.Seed
 import de.rogallab.mobile.data.repositories.PersonRepository
 import de.rogallab.mobile.domain.IPersonRepository
+import de.rogallab.mobile.domain.utilities.logError
 import de.rogallab.mobile.domain.utilities.logInfo
 import de.rogallab.mobile.ui.people.PeopleViewModel
 import de.rogallab.mobile.ui.people.PersonValidator
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val uiModules: Module = module {
@@ -26,14 +30,25 @@ val uiModules: Module = module {
    viewModel<PeopleViewModel> {
       PeopleViewModel(
          _repository = get<IPersonRepository>(),
-         _validator = get<PersonValidator>()
+         _validator = get<PersonValidator>(),
+         _exceptionHandler = get<CoroutineExceptionHandler>()
       )
    }
 }
 
-private val tag = "<-domainModules"
 val domainModules: Module = module {
+   val tag = "<-domainModules"
 
+   logInfo(tag, "single    -> CoroutineExceptionHandler")
+   single<CoroutineExceptionHandler> {
+      CoroutineExceptionHandler { _, exception ->
+         logError(tag, "Coroutine exception: ${exception.localizedMessage}")
+      }
+   }
+   logInfo(tag, "single    -> named(DispatcherIO)")
+   single<CoroutineDispatcher>(named("DispatcherIO")) { Dispatchers.IO }
+   logInfo(tag, "single    -> named(DispatcherMain)")
+   single<CoroutineDispatcher>(named("DispatcherMain")) { Dispatchers.Main }
 }
 
 val dataModules = module {
