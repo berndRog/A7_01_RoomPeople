@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,38 +27,66 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import de.rogallab.mobile.R
+import de.rogallab.mobile.domain.utilities.logDebug
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputEmail(
    email: String?,                                       // State ↓
-   onEmailChange: (String) -> Unit,                      // Event ↑
+   onEmailChange: (String?) -> Unit,                      // Event ↑
    validateEmail: (String?) -> Pair<Boolean, String>,    // Event ↑
    label: String = stringResource(R.string.email),// State ↓
 ) {
+
+   var localEmail by rememberSaveable { mutableStateOf(email) }
+   var isFocus by rememberSaveable { mutableStateOf(false) }
    var isError by rememberSaveable { mutableStateOf(false) }
    var errorText by rememberSaveable { mutableStateOf("") }
+   val focusManager = LocalFocusManager.current
 
-   var isFocus by rememberSaveable { mutableStateOf(false) }
-   val focusManager: FocusManager = LocalFocusManager.current
-   val keyboardController = LocalSoftwareKeyboardController.current
+   // Update localEmail when email changes
+   LaunchedEffect(email) {
+      localEmail = email
+   }
 
-   // Reusable Validation Functions: Validate the input when it changes
-   val validate: (String?) -> Unit = { input ->
-      val (e, t) = validateEmail(input)
+   // Debounce mechanism to delay onNameChange call
+   LaunchedEffect(localEmail) {
+      delay(300) // Adjust delay as needed
+      if (!isError && localEmail != email) {
+         onEmailChange(localEmail) // Update ViewModel
+      }
+   }
+
+   // Validate email when focus is lost
+   fun validateAndPropagateEmail() {
+      val (e, t) = validateEmail(localEmail)
       isError = e
       errorText = t
+      logDebug("<-InputEmail", "isError $e errorText $t")
+      if (!isError && !localEmail.isNullOrEmpty() && localEmail != email) {
+         onEmailChange(localEmail) // Update ViewModel only if valid
+      }
    }
 
    OutlinedTextField(
       modifier = Modifier.fillMaxWidth()
          .onFocusChanged { focusState ->
-            if (!focusState.isFocused && isFocus) validate(email)
+            logDebug("<-InputEmail","onFocusChanged !focusState.isFocused ${!focusState.isFocused} isFocus $isFocus")
+            if (!focusState.isFocused && isFocus) {
+               validateAndPropagateEmail()
+            }
             isFocus = focusState.isFocused
          },
 
-      value = email ?: "",                   // State ↓
-      onValueChange = { onEmailChange(it) }, // Event ↑
+      value = localEmail ?: "",              // State ↓
+      onValueChange = {                      // Event ↑
+         localEmail = it
+         // onEmailChange(localEmail)  // see debouncing
+         if (isError) {
+            isError = false
+            errorText = ""
+         }
+      },
 
       label = { Text(text = label) },
       textStyle = MaterialTheme.typography.bodyLarge,
@@ -75,10 +104,8 @@ fun InputEmail(
       ),
       keyboardActions = KeyboardActions(
          onNext = {
-            keyboardController?.hide()
-            validate(email)
+            validateAndPropagateEmail()
             if (!isError) {
-               keyboardController?.hide()
                focusManager.moveFocus(FocusDirection.Down)
             }
          }

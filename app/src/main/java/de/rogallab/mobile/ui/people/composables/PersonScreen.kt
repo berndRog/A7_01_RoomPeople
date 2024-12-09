@@ -152,13 +152,13 @@ fun PersonScreen(
             validateName = validator::validateLastName,     // Event ↑ no state change
          )
          InputEmail(
-            email = personUiState.person.email,             // State ↓
-            onEmailChange = { email:String ->               // Event ↑
+            email = personUiState.person.email ?: "",             // State ↓
+            onEmailChange = { email:String? ->               // Event ↑
                viewModel.onProcessPersonIntent(PersonIntent.EmailChange(email)) },
             validateEmail = validator::validateEmail        // Event ↑ no state change
          )
          InputPhone(
-            phone = personUiState.person.phone,             // State ↓
+            phone = personUiState.person.phone ?: "",             // State ↓
             onPhoneChange = { phone:String ->               // Event ↑
                viewModel.onProcessPersonIntent(PersonIntent.PhoneChange(phone)) },
             validatePhone = validator::validatePhone        // Event ↑ no state change

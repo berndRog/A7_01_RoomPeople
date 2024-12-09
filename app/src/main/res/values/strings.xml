@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="personInput">Person hinzufügen</string>
-  <string name="personDetail">Person bearbeiten</string>
-  <string name="peopleList">Personen</string>
-  <string name="firstName">Vorname</string>
-  <string name="lastName">Nachname</string>
-  <string name="email">E-Mail Adresse</string>
-  <string name="phone">Telefonnummer</string>
+  <string name="personInput">Add perso</string>
+  <string name="personDetail">Update person</string>
+  <string name="peopleList">People</string>
+  <string name="firstName">Firstname</string>
+  <string name="lastName">Lastname</string>
+  <string name="email">Email address</string>
+  <string name="phone">Phone number</string>
   <string name="errorCharMin">2</string>
   <string name="errorCharMax">16</string>
-  <string name="errorFirstNameTooShort">Vorname ist zu kurz</string>
-  <string name="errorFirstNameTooLong">Vorname ist zu lang</string>
-  <string name="errorLastNameTooShort">Nachname ist zu kurz</string>
-  <string name="errorLastNameTooLong">Nachname ist zu lang</string>
-  <string name="errorEmail">E-Mail Adresse ist ungültig</string>
-  <string name="errorPhone">Telefonnummer ist ungültig</string>
-  <string name="send">Senden</string>
-  <string name="save">Speichern</string>
-  <string name="back">Zurück</string>
-  <string name="undoDeletePerson">Sind Sie sicher, dass Sie diese Person löschen möchten?</string>
-  <string name="undoAnswer">nein</string>
-  <string name="app_name">ScaffoldNavigation</string>
+  <string name="errorFirstNameTooShort">Firstname is too short</string>
+  <string name="errorFirstNameTooLong">Firstname is too long</string>
+  <string name="errorLastNameTooShort">Firstname is too short</string>
+  <string name="errorLastNameTooLong">Lastname is too long</string>
+  <string name="errorEmail">Email address is invalid</string>
+  <string name="errorPhone">Phone number is invalid</string>
+  <string name="send">Send</string>
+  <string name="save">Save</string>
+  <string name="back">Back</string>
+  <string name="undoDeletePerson">Are you sure you want to delete this person?</string>
+  <string name="undoAnswer">no</string>
+  <string name="app_name">RoomPeople</string>
 </resources>

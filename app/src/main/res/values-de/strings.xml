@@ -20,5 +20,5 @@
   <string name="back">Zurück</string>
   <string name="undoDeletePerson">Sind Sie sicher, dass Sie diese Person löschen möchten?</string>
   <string name="undoAnswer">nein</string>
-  <string name="app_name">ScaffoldNavigation</string>
+  <string name="app_name">RoomPeople</string>
 </resources>

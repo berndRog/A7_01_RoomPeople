@@ -1,5 +1,5 @@
 [versions]
-androidxComposeBom = "2024.11.00"
+androidxComposeBom = "2024.10.00"
 
 activityCompose = "1.9.3"
 coilCompose = "2.7.0"
