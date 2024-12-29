@@ -9,8 +9,11 @@ suspend fun showError(
    snackbarHostState: SnackbarHostState,  // State ↓
    params: ErrorParams,                   // State ↓
    onNavigate: (NavEvent) -> Unit,        // Event ↑
+   onErrorEventHandled: () -> Unit = { }  // Event ↑
 ) {
    // Show Snackbar
+   logVerbose("<-showError", "Show snackbar: $params ")
+
    snackbarHostState.showSnackbar(
       message = params.throwable?.message ?: params.message,
       actionLabel = params.actionLabel,
@@ -20,14 +23,16 @@ suspend fun showError(
       // Handle Snackbar action
       when (result) {
          SnackbarResult.ActionPerformed -> {
-            logVerbose("showError", "Snackbar action performed")
+            logVerbose("<-showError", "Snackbar action performed")
             params.onUndoAction()
          }
          SnackbarResult.Dismissed -> {
-            logVerbose("showError", "Snackbar dismissed")
+            logVerbose("<-showError", "Snackbar dismissed")
          }
       }
    }
+   // reset the errorState, params are copied to showError
+   onErrorEventHandled()
 
    // navigate to target
    params.navEvent?.let { navEvent ->

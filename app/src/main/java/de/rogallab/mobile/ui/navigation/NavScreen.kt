@@ -26,5 +26,4 @@ sealed class NavScreen(
       title = "Person ändern",
       icon = Icons.Outlined.Person
    )
-
 }

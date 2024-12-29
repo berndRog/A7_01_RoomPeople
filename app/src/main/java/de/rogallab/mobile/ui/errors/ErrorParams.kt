@@ -12,7 +12,7 @@ data class ErrorParams(
    // Snackbar parameters
    val actionLabel: String? = "ok",
    // duration of the snackbars visibility
-   val duration: SnackbarDuration = SnackbarDuration.Indefinite,
+   val duration: SnackbarDuration = SnackbarDuration.Long,
    // undo action
    val withUndoAction: Boolean = false,
    val onUndoAction: () -> Unit = {}, // default action: do nothing

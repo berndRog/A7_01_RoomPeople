@@ -155,14 +155,11 @@ fun PeopleListScreen(
 
    val errorState: ErrorState
       by viewModel.errorStateFlow.collectAsStateWithLifecycle()
-
    LaunchedEffect(errorState.params) {
       errorState.params?.let { params: ErrorParams ->
-         logDebug(tag, "ErrorUiState: ${errorState.params}")
          // show the error with a snackbar
-         showError(snackbarHostState, params, viewModel::onNavigate )
-         // reset the errorState, params are copied to showError
-         viewModel.onErrorEventHandled()
+         showError(snackbarHostState, params,
+            viewModel::onNavigate, viewModel::onErrorEventHandled)
       }
    }
 }

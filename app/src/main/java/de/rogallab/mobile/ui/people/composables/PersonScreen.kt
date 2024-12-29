@@ -47,9 +47,9 @@ import de.rogallab.mobile.ui.errors.showError
 import de.rogallab.mobile.ui.navigation.NavEvent
 import de.rogallab.mobile.ui.navigation.NavScreen
 import de.rogallab.mobile.ui.people.PeopleViewModel
-import de.rogallab.mobile.ui.people.PersonValidator
 import de.rogallab.mobile.ui.people.PersonIntent
 import de.rogallab.mobile.ui.people.PersonUiState
+import de.rogallab.mobile.ui.people.PersonValidator
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -153,7 +153,7 @@ fun PersonScreen(
          )
          InputEmail(
             email = personUiState.person.email ?: "",             // State ↓
-            onEmailChange = { email:String? ->               // Event ↑
+            onEmailChange = { email:String ->               // Event ↑
                viewModel.onProcessPersonIntent(PersonIntent.EmailChange(email)) },
             validateEmail = validator::validateEmail        // Event ↑ no state change
          )
@@ -176,11 +176,9 @@ fun PersonScreen(
       by viewModel.errorStateFlow.collectAsStateWithLifecycle()
    LaunchedEffect(errorState.params) {
       errorState.params?.let { params: ErrorParams ->
-         logDebug(tag, "ErrorState: ${errorState.params}")
          // show the error with a snackbar
-         showError(snackbarHostState, params, viewModel::onNavigate )
-         // reset the errorState, params are copied to showError
-         viewModel::onErrorEventHandled
+         showError(snackbarHostState, params,
+            viewModel::onNavigate, viewModel::onErrorEventHandled)
       }
    }
 }

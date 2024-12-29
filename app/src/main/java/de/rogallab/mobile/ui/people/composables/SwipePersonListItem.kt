@@ -75,7 +75,7 @@ fun SwipePersonListItem(
          positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold,
       )
 
-   val undoDeletePerson = stringResource(R.string.undoDeletePerson)+"\n${person.firstName} ${person.lastName}"
+   val undoDeletePerson = stringResource(R.string.undoDeletePerson)
    val undoAnswer = stringResource(R.string.undoAnswer)
 
    LaunchedEffect(key1 = isRemoved) {
@@ -87,7 +87,7 @@ fun SwipePersonListItem(
             message = undoDeletePerson,
             actionLabel = undoAnswer,
             duration = SnackbarDuration.Short,
-            withUndoAction = true,
+            withUndoAction = false,
             onUndoAction = onUndoAction,
             navEvent = NavEvent.NavigateReverse(route = NavScreen.PeopleList.route)
          )

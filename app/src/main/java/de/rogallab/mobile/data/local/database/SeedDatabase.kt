@@ -13,11 +13,11 @@ class SeedDatabase(
    private val _database: RoomDatabase,
    private val _personDao: IPersonDao,
    private val _seed: Seed,
-   private val _coroutineDispatcher: CoroutineDispatcher,
+   private val _dispatcher: CoroutineDispatcher,
 ) : KoinComponent {
 
    suspend fun seedPerson(): Boolean =
-      withContext(_coroutineDispatcher) {
+      withContext(_dispatcher) {
          try {
             _personDao.count().let { count ->
                if (count > 0) {

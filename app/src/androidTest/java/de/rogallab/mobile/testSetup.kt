@@ -44,7 +44,7 @@ val dataTestModules = module {
          _database = get<AppDatabase>(),
          _personDao = get<IPersonDao>(),
          _seed = get<Seed>(),
-         _coroutineDispatcher = get<TestDispatcher>(),
+         _dispatcher = get<TestDispatcher>(),
       )
    }
 

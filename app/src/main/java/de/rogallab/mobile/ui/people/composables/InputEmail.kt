@@ -32,8 +32,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun InputEmail(
-   email: String?,                                       // State ↓
-   onEmailChange: (String?) -> Unit,                      // Event ↑
+   email: String,                                       // State ↓
+   onEmailChange: (String) -> Unit,                      // Event ↑
    validateEmail: (String?) -> Pair<Boolean, String>,    // Event ↑
    label: String = stringResource(R.string.email),// State ↓
 ) {
@@ -63,7 +63,7 @@ fun InputEmail(
       isError = e
       errorText = t
       logDebug("<-InputEmail", "isError $e errorText $t")
-      if (!isError && !localEmail.isNullOrEmpty() && localEmail != email) {
+      if (!isError && localEmail != email) {
          onEmailChange(localEmail) // Update ViewModel only if valid
       }
    }
@@ -78,7 +78,7 @@ fun InputEmail(
             isFocus = focusState.isFocused
          },
 
-      value = localEmail ?: "",              // State ↓
+      value = localEmail,                    // State ↓
       onValueChange = {                      // Event ↑
          localEmail = it
          // onEmailChange(localEmail)  // see debouncing

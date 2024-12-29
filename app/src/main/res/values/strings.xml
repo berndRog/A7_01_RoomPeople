@@ -18,7 +18,7 @@
   <string name="send">Send</string>
   <string name="save">Save</string>
   <string name="back">Back</string>
-  <string name="undoDeletePerson">Are you sure you want to delete this person?</string>
-  <string name="undoAnswer">no</string>
+  <string name="undoDeletePerson">Do you want to undo the persons deletion?</string>
+  <string name="undoAnswer">Yes</string>
   <string name="app_name">RoomPeople</string>
 </resources>
