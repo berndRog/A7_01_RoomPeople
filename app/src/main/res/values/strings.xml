@@ -7,6 +7,7 @@
   <string name="lastName">Lastname</string>
   <string name="email">Email address</string>
   <string name="phone">Phone number</string>
+  <string name="image">Image of the person</string>
   <string name="errorCharMin">2</string>
   <string name="errorCharMax">16</string>
   <string name="errorFirstNameTooShort">Firstname is too short</string>
@@ -18,6 +19,8 @@
   <string name="send">Send</string>
   <string name="save">Save</string>
   <string name="back">Back</string>
+  <string name="edit">Edit</string>
+  <string name="delete">Delete</string>
   <string name="undoDeletePerson">Do you want to undo the persons deletion?</string>
   <string name="undoAnswer">Yes</string>
   <string name="app_name">RoomPeople</string>

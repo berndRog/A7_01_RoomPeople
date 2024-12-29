@@ -80,8 +80,8 @@ val dataModules = module {
       SeedDatabase(
          _database = get<AppDatabase>(),
          _personDao = get<IPersonDao>(),
-         _seed =get<Seed>(),
-         _dispatcher = Dispatchers.IO,
+         _seed = get<Seed>(),
+         _dispatcher = get<CoroutineDispatcherIo>(),
       )
    }
 
@@ -107,11 +107,10 @@ val dataModules = module {
    }
 }
 
-
 val uiModules: Module = module {
    val tag = "<-uiModules"
 
-   logInfo(tag, "factory   -> NavigationoroutineExceptionHandler")
+   logInfo(tag, "factory   -> NavigationHandler: INavigationHandler")
    factory<INavigationHandler> {
       NavigationHandler(
          _coroutineScopeMain = get<CoroutineScopeMain>(),
@@ -119,6 +118,7 @@ val uiModules: Module = module {
       )
    }
 
+   logInfo(tag, "factory   -> ErrorHandler: IErrorHandler")
    factory<IErrorHandler> {
       ErrorHandler(
          _coroutineScopeMain = get<CoroutineScopeMain>(),

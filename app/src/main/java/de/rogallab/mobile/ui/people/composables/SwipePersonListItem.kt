@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -51,11 +50,10 @@ fun SwipePersonListItem(
    onErrorEvent: (ErrorParams) -> Unit,
    onUndoAction: () -> Unit,
    animationDuration: Int = 1000,
-   content: @androidx.compose.runtime.Composable () -> Unit
+   content: @Composable () -> Unit
 ) {
 
    var isRemoved by remember{ mutableStateOf(false) }
-   var isUndo by remember{ mutableStateOf(false) }
    var hasNavigated by remember { mutableStateOf(false) }
 
    val state: SwipeToDismissBoxState =
@@ -83,7 +81,7 @@ fun SwipePersonListItem(
          delay(animationDuration.toLong())
          onProcessIntent(PersonIntent.Remove(person))
          // undo remove?
-         var params = ErrorParams(
+         val params = ErrorParams(
             message = undoDeletePerson,
             actionLabel = undoAnswer,
             duration = SnackbarDuration.Short,
@@ -118,7 +116,6 @@ fun SwipePersonListItem(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun SetSwipeBackground(state: SwipeToDismissBoxState) {
 
    // Determine the properties of the swipe
@@ -143,7 +140,6 @@ fun SetSwipeBackground(state: SwipeToDismissBoxState) {
    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun getSwipeProperties(
    state: SwipeToDismissBoxState
@@ -180,8 +176,8 @@ fun getSwipeProperties(
 
    // Set the description
    val description: String = when (state.dismissDirection) {
-      SwipeToDismissBoxValue.StartToEnd -> "Editieren"
-      SwipeToDismissBoxValue.EndToStart -> "Löschen"
+      SwipeToDismissBoxValue.StartToEnd -> stringResource(R.string.edit)
+      SwipeToDismissBoxValue.EndToStart -> stringResource(R.string.delete)
       else -> "Unknown Action"
    }
 

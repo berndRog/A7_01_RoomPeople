@@ -115,7 +115,6 @@ class PeopleViewModel(
 //   }
    //endregion
 
-
    //region PersonScreen --------------------------------------------------------------------------------
    private val _personUiStateFlow = MutableStateFlow(PersonUiState())
    val personUiStateFlow = _personUiStateFlow.asStateFlow()

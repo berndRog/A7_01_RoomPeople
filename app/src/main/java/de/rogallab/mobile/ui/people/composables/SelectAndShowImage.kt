@@ -12,8 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import de.rogallab.mobile.R
 
 @Composable
 fun SelectAndShowImage(
@@ -33,7 +35,7 @@ fun SelectAndShowImage(
                .size(width = 150.dp, height = 200.dp)
                .clip(RoundedCornerShape(percent = 5)),
             model = url,
-            contentDescription = "Bild des Kontakts",
+            contentDescription = stringResource(R.string.image),
             alignment = Alignment.Center,
             contentScale = ContentScale.Crop
          )
