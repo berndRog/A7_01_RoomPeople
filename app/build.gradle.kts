@@ -89,6 +89,7 @@ dependencies {
    // https://kotlinlang.org/docs/releases.html
    implementation (libs.kotlinx.coroutines.core)
    implementation (libs.kotlinx.coroutines.android)
+   implementation (libs.kotlinx.datetime)
 
    // Ui Activity
    // https://developer.android.com/jetpack/androidx/releases/activity
